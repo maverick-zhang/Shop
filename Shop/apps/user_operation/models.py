@@ -37,7 +37,7 @@ class UserLeavingMessage(models.Model):
     )
     user = models.ForeignKey(User, verbose_name="用户")
     msg_type = models.CharField(choices=MESSAGE_TYPE, verbose_name="留言类型",
-                                help_text="留言类型：1(留言), 2(投诉), 3(询问), 4(售后), 5(求购)")
+                                help_text="留言类型：1(留言), 2(投诉), 3(询问), 4(售后), 5(求购)", max_length=8)
     message = models.TextField(default="", verbose_name="留言内容", help_text="留言内容")
     file = models.FileField(upload_to="", verbose_name="上传的文件", help_text="上传的文件")
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")

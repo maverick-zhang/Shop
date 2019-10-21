@@ -11,9 +11,9 @@ class UserProfile(AbstractUser):
     """
     name = models.CharField(max_length=64, null=True, blank=True, verbose_name="姓名")
     email = models.CharField(max_length=64, null=True, blank=True, verbose_name="邮箱")
-    mobil = models.CharField(max_length=16, verbose_name="电话")
+    mobil = models.CharField(max_length=16, verbose_name="电话", default="")
     gender = models.CharField(max_length=8, choices=(("male", "男"), ("female", "女")), default="female")
-    birthday = models.DateField()
+    birthday = models.DateField(null=True)
     add_time = models.DateTimeField(default=datetime.datetime.now, verbose_name="添加时间")
 
     class Meta:
