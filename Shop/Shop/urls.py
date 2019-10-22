@@ -13,15 +13,26 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.static import serve
+from rest_framework.documentation import include_docs_urls
 
 import xadmin
 from Shop.settings import MEDIA_ROOT
+from goods.views import GoodsList
+from goods.views_base import GoodsListView
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
     # 访问资源时配置的URL
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
+    # 商品的列表页面
+    # url(r'^goods/$', GoodsListView.as_view(), name="goods_list"),
+    url(r'^docs/', include_docs_urls(title="商店")),
+
+    #  browsable API you'll probably also want to add REST framework's login and logout views
+    url(r'^api-auth/', include('rest_framework.urls')),
+
+    url(r'^goods/$', GoodsList.as_view(), name="goods_list")
 ]
