@@ -17,11 +17,17 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.static import serve
 from rest_framework.documentation import include_docs_urls
+from rest_framework.routers import DefaultRouter
 
 import xadmin
 from Shop.settings import MEDIA_ROOT
-from goods.views import GoodsList
-from goods.views_base import GoodsListView
+from goods.views import GoodsListViewSet, CategoryViewSet
+
+# from goods.views_base import GoodsListView
+
+router = DefaultRouter()
+router.register(r'goods', GoodsListViewSet, base_name='goods')
+router.register(r'categorys', CategoryViewSet, base_name='categorys')
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
@@ -34,5 +40,6 @@ urlpatterns = [
     #  browsable API you'll probably also want to add REST framework's login and logout views
     url(r'^api-auth/', include('rest_framework.urls')),
 
-    url(r'^goods/$', GoodsList.as_view(), name="goods_list")
+    # url(r'^goods/$', GoodsList.as_view(), name="goods_list")
 ]
+urlpatterns += router.urls
