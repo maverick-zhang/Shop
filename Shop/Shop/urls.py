@@ -16,8 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.static import serve
+from rest_framework.authtoken import views
 from rest_framework.documentation import include_docs_urls
 from rest_framework.routers import DefaultRouter
+from rest_framework_jwt.views import obtain_jwt_token
 
 import xadmin
 from Shop.settings import MEDIA_ROOT
@@ -36,6 +38,11 @@ urlpatterns = [
     # 商品的列表页面
     # url(r'^goods/$', GoodsListView.as_view(), name="goods_list"),
     url(r'^docs/', include_docs_urls(title="商店")),
+
+    # DRF自带的token验证
+    url(r'^api-token-auth/', views.obtain_auth_token),
+    # jwt 验证
+    url(r'^login/', obtain_jwt_token),
 
     #  browsable API you'll probably also want to add REST framework's login and logout views
     url(r'^api-auth/', include('rest_framework.urls')),

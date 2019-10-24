@@ -55,6 +55,7 @@ class GoodsListViewSet(GenericViewSet, ListModelMixin):
     ordering_fields = ('sold_num', 'shop_price')
 
 
+
 class CategoryViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
     """
     list:
