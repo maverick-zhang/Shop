@@ -11,7 +11,7 @@ from rest_framework import serializers
 #     def update(self, instance, validated_data):
 #         pass
 
-from goods.models import Goods, GoodsCategory
+from goods.models import Goods, GoodsCategory, GoodsImage
 
 
 class CategorySerializer3(serializers.ModelSerializer):
@@ -46,14 +46,21 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class GoodsImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GoodsImage
+        fields = ("image", )
+
+
 class GoodsSerializer(serializers.ModelSerializer):
     # 通过显示定义具体字段的序列化对象，可以把外键的详细信息全部展示，否则外键只展示id
     category = CategorySerializer()
+    images = GoodsImageSerializer(many=True)
 
     class Meta:
         model = Goods
-        fields = ("name", "category", "add_time")
+        # fields = ("name", "category", "add_time")
         # 使用一下方式快速实现全部导入
-        # fields = "__all__"
+        fields = "__all__"
 
 

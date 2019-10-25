@@ -26,10 +26,15 @@ from Shop.settings import MEDIA_ROOT
 from goods.views import GoodsListViewSet, CategoryViewSet
 
 # from goods.views_base import GoodsListView
+from user.views import UserViewSet
+from user_operation.views import UserFavViewSet
 
 router = DefaultRouter()
 router.register(r'goods', GoodsListViewSet, base_name='goods')
 router.register(r'categorys', CategoryViewSet, base_name='categorys')
+router.register(r'users', UserViewSet, base_name='users')
+router.register(r'userfavs ', UserFavViewSet, base_name="userfav")
+
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
