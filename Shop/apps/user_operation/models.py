@@ -19,6 +19,7 @@ class UserFav(models.Model):
     class Meta:
         verbose_name = "用户收藏"
         verbose_name_plural = verbose_name
+        # 对于单个用户来说，某个商品只能
 
     def __str__(self):
         return self.user.name

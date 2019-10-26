@@ -33,7 +33,7 @@ router = DefaultRouter()
 router.register(r'goods', GoodsListViewSet, base_name='goods')
 router.register(r'categorys', CategoryViewSet, base_name='categorys')
 router.register(r'users', UserViewSet, base_name='users')
-router.register(r'userfavs ', UserFavViewSet, base_name="userfav")
+router.register(r'userfavs', UserFavViewSet, base_name="userfav")
 
 
 urlpatterns = [
