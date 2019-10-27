@@ -10,7 +10,7 @@ from user.models import VerifyCode
 
 User = get_user_model()
 
-REGEX_MOBIL = "^1[358]\d{9}$|^147\d{8}$|^176\d{8}$"
+REGEX_MOBIL = r"^1[358]\d{9}$|^147\d{8}$|^176\d{8}$"
 
 
 class SmsSerializer(serializers.Serializer):
@@ -79,4 +79,11 @@ class UserRegSerializer(ModelSerializer):
         model = User
         # fields必须包含传入的所有数据，然后进行映射
         fields = ('username', 'password', 'code')
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('name', 'birthday', 'mobil', 'gender')
+
 

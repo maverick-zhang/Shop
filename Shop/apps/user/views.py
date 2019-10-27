@@ -4,13 +4,16 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from rest_framework import status
-from rest_framework.mixins import CreateModelMixin
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 
 from user.models import VerifyCode
-from user.serializers import SmsSerializer, UserRegSerializer
+from user.serializers import SmsSerializer, UserRegSerializer, UserDetailSerializer
 from utils.yunpian import YunPian
 
 User = get_user_model()
@@ -68,9 +71,31 @@ class SmsCodeViewSet(CreateModelMixin, GenericViewSet):
             return Response({"mobil": mobil}, status=status.HTTP_201_CREATED)
 
 
-class UserViewSet(CreateModelMixin, GenericViewSet):
-    serializer_class = UserRegSerializer
+class UserViewSet(CreateModelMixin, GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
+    authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
+    # serializer_class = UserRegSerializer
+    # 不同的action需要的permission不同，因此不能定义视图类的全局权限类
+    # permission_classes = (IsAuthenticated, )
     queryset = User.objects.all()
+
+    def get_permissions(self):
+        """
+        注意这里的返回结果需要是认证类的实例列表
+        :return:
+        """
+        if self.action == "create":
+            return [AllowAny(), ]
+        elif self.action == "retrieve":
+            return [IsAuthenticated(), ]
+        else:
+            return []
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return UserRegSerializer
+        elif self.action == "retrieve":
+            return UserDetailSerializer
+        return UserDetailSerializer
 
     def create(self, request, *args, **kwargs):
         """
@@ -96,6 +121,9 @@ class UserViewSet(CreateModelMixin, GenericViewSet):
 
     def perform_create(self, serializer):
         return serializer.save()
+
+    def get_object(self):
+        return self.request.user
 
 
 

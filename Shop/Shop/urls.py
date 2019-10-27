@@ -46,6 +46,7 @@ urlpatterns = [
 
     # DRF自带的token验证
     url(r'^api-token-auth/', views.obtain_auth_token),
+
     # jwt 验证
     url(r'^login/', obtain_jwt_token),
 

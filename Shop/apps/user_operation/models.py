@@ -19,10 +19,11 @@ class UserFav(models.Model):
     class Meta:
         verbose_name = "用户收藏"
         verbose_name_plural = verbose_name
-        # 对于单个用户来说，某个商品只能
+        # 对于单个用户来说，某个商品只能收藏一次，因此需要设置用户和商品的联合unique
+        unique_together = ("user", "goods")
 
     def __str__(self):
-        return self.user.name
+        return self.user.name if self.user.name else self.user.uername
 
 
 class UserLeavingMessage(models.Model):
