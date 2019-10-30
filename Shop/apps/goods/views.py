@@ -11,7 +11,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from goods.filters import GoodsFilter
 from goods.models import Goods, GoodsCategory
-from goods.serializer import GoodsSerializer, CategorySerializer
+from goods.serializers import GoodsSerializer, CategorySerializer
 
 
 # class GoodsList(APIView):

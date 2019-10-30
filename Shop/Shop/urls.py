@@ -26,14 +26,27 @@ from Shop.settings import MEDIA_ROOT
 from goods.views import GoodsListViewSet, CategoryViewSet
 
 # from goods.views_base import GoodsListView
+from trade.views import ShoppingCartViewSet, OrderViewSet
 from user.views import UserViewSet
-from user_operation.views import UserFavViewSet
+from user_operation.views import UserFavViewSet, LeavingMessageViewSet, AddressViewSet
 
 router = DefaultRouter()
+# 商品列表
 router.register(r'goods', GoodsListViewSet, base_name='goods')
+# 商品分类
 router.register(r'categorys', CategoryViewSet, base_name='categorys')
+# 用户
 router.register(r'users', UserViewSet, base_name='users')
+# 用户收藏
 router.register(r'userfavs', UserFavViewSet, base_name="userfav")
+# 用户收藏
+router.register(r'messages', LeavingMessageViewSet, base_name="messages")
+# 收货地址
+router.register(r'address', AddressViewSet, base_name="address")
+# 购物车
+router.register(r'shopcarts', ShoppingCartViewSet, base_name="shoppingcart")
+# 订单管理
+router.register(r'orders', OrderViewSet, base_name="orders")
 
 
 urlpatterns = [

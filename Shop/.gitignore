@@ -5,3 +5,5 @@ Shop/__pycache__/
 __pycache__
 */__pycache__/
 Shop/.idea
+apps/utils/alipay.py
+

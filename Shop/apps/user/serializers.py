@@ -6,11 +6,10 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from rest_framework.validators import UniqueValidator
 
+from Shop.settings import REGEX_MOBIL
 from user.models import VerifyCode
 
 User = get_user_model()
-
-REGEX_MOBIL = r"^1[358]\d{9}$|^147\d{8}$|^176\d{8}$"
 
 
 class SmsSerializer(serializers.Serializer):
