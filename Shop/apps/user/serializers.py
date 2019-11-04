@@ -13,28 +13,28 @@ User = get_user_model()
 
 
 class SmsSerializer(serializers.Serializer):
-    mobil = serializers.CharField(max_length=11)
+    mobile = serializers.CharField(max_length=11)
 
-    def validate_mobil(self, mobil):
+    def validate_mobile(self, mobile):
         """
         验证手机号码
         :param mobil:手机号
         :return:手机号
         """
         # 验证手机号是否已经注册
-        if User.objects.filter(mobil=mobil).count():
+        if User.objects.filter(mobile=mobile).count():
             raise serializers.ValidationError("用户已经存在")
 
         # 验证格式是否正确
-        if not re.match(REGEX_MOBIL, mobil):
+        if not re.match(REGEX_MOBIL, mobile):
             raise serializers.ValidationError("手机号格式不正确")
 
         # 验证验证码发送频率
         one_minutes_ago = datetime.now() - timedelta(hours=0, minutes=1, seconds=0)
-        if User.objects.filter(mobil=mobil, add_time__gt=one_minutes_ago):
+        if User.objects.filter(mobile=mobile, add_time__gt=one_minutes_ago):
             raise serializers.ValidationError("距离上一次发送未超过60s")
 
-        return mobil
+        return mobile
 
 
 class UserRegSerializer(ModelSerializer):
@@ -52,7 +52,7 @@ class UserRegSerializer(ModelSerializer):
                                      style={"input_type": "password"})
 
     def validated_code(self, code):
-        verify_records = VerifyCode.objects.filter(mobil=self.initial_data["username"]).order_by("-add_time")
+        verify_records = VerifyCode.objects.filter(mobile=self.initial_data["username"]).order_by("-add_time")
         if verify_records:
             last_record = verify_records[0]
             five_minutes_ago = datetime.now() - timedelta(hours=0, minutes=5, seconds=0)
@@ -64,7 +64,7 @@ class UserRegSerializer(ModelSerializer):
             raise serializers.ValidationError("验证码错误")
 
     def validate(self, attrs):
-        attrs["mobil"] = attrs["username"]
+        attrs["mobile"] = attrs["username"]
         del attrs["code"]
         return attrs
 
@@ -83,6 +83,6 @@ class UserRegSerializer(ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('name', 'birthday', 'mobil', 'gender')
+        fields = ('name', 'birthday', 'mobile', 'gender')
 
 

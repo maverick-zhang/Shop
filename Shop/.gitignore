@@ -6,4 +6,5 @@ __pycache__
 */__pycache__/
 Shop/.idea
 apps/utils/alipay.py
+apps/utils/keys
 

@@ -50,12 +50,12 @@ class AddressSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
 
-    def validate_signer_mobil(self, mobil):
-        if not re.match(REGEX_MOBIL, mobil):
+    def validate_signer_mobile(self, mobile):
+        if not re.match(REGEX_MOBIL, mobile):
             raise serializers.ValidationError("手机号格式不正确")
         else:
-            return mobil
+            return mobile
 
     class Meta:
         model = UserAddress
-        fields = ("user", "address", "signer_name", "signer_mobil", "district", "province", "city", "id")
+        fields = ("user", "address", "signer_name", "signer_mobile", "district", "province", "city", "id")

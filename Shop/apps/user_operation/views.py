@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
-from user_operation.models import UserFav, UserLeavingMessage
+from user_operation.models import UserFav, UserLeavingMessage, UserAddress
 from user_operation.serializer import UserFavSerializer, UserFavDetailSerializer, LeavingMessageSerializer, \
     AddressSerializer
 from utils.permissions import IsOwnerOrReadOnly
@@ -28,6 +28,12 @@ class UserFavViewSet(GenericViewSet, CreateModelMixin,
 
     def get_queryset(self):
         return UserFav.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        goods = instance.goods
+        goods.fav_num += 1
+        goods.save()
 
     def get_serializer_class(self):
         if self.action == "retrieve":
@@ -75,6 +81,6 @@ class AddressViewSet(ModelViewSet):
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 
     def get_queryset(self):
-        return UserLeavingMessage.objects.filter(user=self.request.user)
+        return UserAddress.objects.filter(user=self.request.user)
 
 

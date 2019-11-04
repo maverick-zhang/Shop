@@ -32,9 +32,11 @@ class OrderInfo(models.Model):
     订单信息
     """
     ORDER_STATUS = (
-        ("success", "成功"),
-        ("cancel", "取消"),
-        ("paying", "待支付"),
+        ("TRADE_FINISHED", "交易完结"),
+        ("TRADE_CLOSED", "交易关闭"),
+        ("WAIT_BUYER_PAY", "待支付"),
+        ("TRADE_SUCCESS", "交易成功"),
+        ("TRADE_CREATED", "交易创建"),
     )
     # PAY_TYPE = (
     #     ("alipay", "支付宝"),
@@ -44,8 +46,8 @@ class OrderInfo(models.Model):
     user = models.ForeignKey(User, verbose_name="用户")
     order_sn = models.CharField(max_length=30, null=True, blank=True, unique=True, verbose_name="订单号")
     trade_no = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name="交易编号")
-    pay_status = models.CharField(choices=ORDER_STATUS, default="paying", max_length=10, verbose_name="支付状态")
-    order_mount = models.FloatField(default=0, verbose_name="订单金额")
+    pay_status = models.CharField(choices=ORDER_STATUS, default="WAIT_BUYER_PAY", max_length=20, verbose_name="支付状态")
+    order_amount = models.FloatField(default=0, verbose_name="订单金额")
     pay_time = models.DateTimeField(null=True, blank=True, verbose_name="支付时间")
     post_script = models.CharField(max_length=200, verbose_name="订单留言", default="")
     # pay_type = models.CharField(max_length=10, choices=PAY_TYPE, verbose_name="支付方式")
@@ -53,7 +55,7 @@ class OrderInfo(models.Model):
     # 收货人的信息
     address = models.CharField(max_length=100, verbose_name="收货地址", default="")    # 这里不使用地址外键的原因是这里的信息不能进行修改两者是隔离的
     signer_name = models.CharField(max_length=20, default="", verbose_name="签收人" )
-    signer_mobil = models.CharField(max_length=16, verbose_name="联系电话", default="")
+    signer_mobile = models.CharField(max_length=16, verbose_name="联系电话", default="")
 
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 

@@ -9,8 +9,8 @@ class ShoppingCartAdmin(object):
 
 
 class OrderInfoAdmin(object):
-    list_display = ["user", "order_sn",  "trade_no", "pay_status", "post_script", "order_mount",
-                    "order_mount", "pay_time", "add_time"]
+    list_display = ["user", "order_sn",  "trade_no", "pay_status", "post_script", "order_amount",
+                    "pay_time", "add_time"]
 
     class OrderGoodsInline(object):
         model = OrderGoods

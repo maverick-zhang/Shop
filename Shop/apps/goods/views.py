@@ -6,12 +6,14 @@ from rest_framework.generics import ListAPIView, GenericAPIView
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
+from rest_framework_extensions.cache.mixins import CacheResponseMixin
 
 from goods.filters import GoodsFilter
-from goods.models import Goods, GoodsCategory
-from goods.serializers import GoodsSerializer, CategorySerializer
+from goods.models import Goods, GoodsCategory, Banner
+from goods.serializers import GoodsSerializer, CategorySerializer, BannerSerializer, IndexCategorySerializer
 
 
 # class GoodsList(APIView):
@@ -45,7 +47,8 @@ class MyPaginator(PageNumberPagination):
     max_page_size = 100
 
 
-class GoodsListViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
+class GoodsListViewSet(CacheResponseMixin, GenericViewSet, ListModelMixin, RetrieveModelMixin):
+    throttle_classes = (UserRateThrottle, AnonRateThrottle)
     queryset = Goods.objects.all()
     serializer_class = GoodsSerializer
     # 使用自己的分页器类进行分页
@@ -54,6 +57,13 @@ class GoodsListViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     filter_class = GoodsFilter
     search_fields = ('name', 'goods_brief')
     ordering_fields = ('sold_num', 'shop_price')
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.click_num += 1
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 class CategoryViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
@@ -66,6 +76,24 @@ class CategoryViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
 
     queryset = GoodsCategory.objects.filter(category_type=1)
     serializer_class = CategorySerializer
+
+
+class BannerViewSet(ListModelMixin, GenericViewSet):
+    """
+    首页轮播图
+    """
+    queryset = Banner.objects.all().order_by("index")
+    serializer_class = BannerSerializer
+
+
+class IndexCategoryViewSet(ListModelMixin, GenericViewSet):
+    """
+    首页商品列表
+    """
+    # 这里获得的都是一类目录
+    queryset = GoodsCategory.objects.filter(is_tab=True, name__in=("生鲜食品", "酒水饮料"))
+    serializer_class = IndexCategorySerializer
+
 
 
 

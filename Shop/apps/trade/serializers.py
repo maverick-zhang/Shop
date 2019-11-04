@@ -3,12 +3,14 @@ import time
 
 from rest_framework import serializers
 
+from Shop.settings import HOST_IP, PRIVATE_KEY_PATH, ALIPAY_PUBLIC_KEY_PATH
 from goods.models import Goods
 from goods.serializers import GoodsSerializer
 from trade.models import ShoppingCart, OrderInfo, OrderGoods
+from utils.alipay import AliPay
 
 
-class ShoppingCartDetailSerializer(serializers.ModelSerializer):
+class ShoppingCartSerializer(serializers.ModelSerializer):
     goods = GoodsSerializer(many=False)
 
     class Meta:
@@ -16,11 +18,11 @@ class ShoppingCartDetailSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ShoppingCartListSerializer(serializers.Serializer):
+class ShoppingUpdateCreateSerializer(serializers.Serializer):
     """
     这里购物车要处理的逻辑比较复杂，需要重写字段的验证，因此使用Serializer，而不是ModelSerializer
     """
-    goods = serializers.PrimaryKeyRelatedField(queryset=Goods.objects.all(), required=True)
+    goods = serializers.PrimaryKeyRelatedField(queryset=Goods.objects.all(), many=False)
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     nums = serializers.IntegerField(required=True, min_value=1,
                                     error_messages={
@@ -51,7 +53,7 @@ class ShoppingCartListSerializer(serializers.Serializer):
             return new_cart_item
 
     def update(self, instance, validated_data):
-        instance.num = validated_data["num"]
+        instance.nums = validated_data["nums"]
         instance.save()
 
 
@@ -78,6 +80,25 @@ class OrderInfoSerializer(serializers.ModelSerializer):
     order_sn = serializers.CharField(read_only=True)
     trade_no = serializers.CharField(read_only=True)
     pay_time = serializers.DateTimeField(read_only=True)
+    alipay_url = serializers.SerializerMethodField(read_only=True)
+
+    def get_alipay_url(self, obj):
+        alipay = AliPay(
+            appid="2016101600703402",
+            app_notify_url="http://192.168.1.5:8000/alipay/return/",
+            app_private_key_path=PRIVATE_KEY_PATH,
+            alipay_public_key_path=ALIPAY_PUBLIC_KEY_PATH,  # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
+            debug=True,  # 默认False,
+            return_url="http://192.168.1.5:8000/alipay/return/"
+        )
+
+        url = alipay.direct_pay(
+            subject=obj.order_sn,
+            out_trade_no=obj.order_sn,
+            total_amount=obj.order_amount
+        )
+        re_url = "https://openapi.alipaydev.com/gateway.do?{data}".format(data=url)
+        return re_url
 
     def generate_order_sn(self):
         """

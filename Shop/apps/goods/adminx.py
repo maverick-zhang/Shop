@@ -14,7 +14,7 @@
 import xadmin
 # from .models import Goods, GoodsCategory, GoodsImage, GoodsCategoryBrand, Banner, HotSearchWords
 from .models import Goods, GoodsCategory, GoodsImage, GoodsCategoryBrand, Banner
-# from .models import IndexAd
+from .models import IndexAds
 
 
 class GoodsAdmin(object):
@@ -69,5 +69,5 @@ xadmin.site.register(Banner, BannerGoodsAdmin)
 xadmin.site.register(GoodsCategoryBrand, GoodsBrandAdmin)
 
 # xadmin.site.register(HotSearchWords, HotSearchAdmin)
-# xadmin.site.register(IndexAd, IndexAdAdmin)
+xadmin.site.register(IndexAds, IndexAdAdmin)
 

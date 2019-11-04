@@ -27,7 +27,7 @@ class CustomBackend(ModelBackend):
     """
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
-            user = User.objects.get(Q(username=username) | Q(mobil=username))
+            user = User.objects.get(Q(username=username) | Q(mobile=username))
         except User.DoesNotExist:
             return
         if user.check_password(password):
@@ -55,20 +55,20 @@ class SmsCodeViewSet(CreateModelMixin, GenericViewSet):
         serializer = request.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        mobil = serializer.validated_data["mobil"]
+        mobile = serializer.validated_data["mobile"]
 
         yun_pian = YunPian(API_KEY)
         code = self.generate_code()
-        sms_status = yun_pian.send_sms(code, mobil)
+        sms_status = yun_pian.send_sms(code, mobile)
         if sms_status["code"] != 0:
-            code_record = VerifyCode(code=code, mobil=mobil)
+            code_record = VerifyCode(code=code, mobile=mobile)
             code_record.save()
             data = {
-                "mobil": sms_status["msg"]
+                "mobile": sms_status["msg"]
             }
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({"mobil": mobil}, status=status.HTTP_201_CREATED)
+            return Response({"mobile": mobile}, status=status.HTTP_201_CREATED)
 
 
 class UserViewSet(CreateModelMixin, GenericViewSet, RetrieveModelMixin, UpdateModelMixin):

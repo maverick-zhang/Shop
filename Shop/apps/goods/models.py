@@ -19,6 +19,8 @@ class GoodsCategory(models.Model):
     desc = models.TextField(default="", verbose_name="类别描述", help_text="类别描述")
     category_type = models.IntegerField(choices=CATEGORY_TYPE, verbose_name="类目级别", help_text="类目级别")
     # img = models.ForeignKey()
+    # 这里的sub_cat很关键，可以通过序列化时使用sub_cat，即可从主调用从（即获得子类）
+    # 从到主直接使用parent_category,主到从使用sub_cat
     parent_category = models.ForeignKey("self", null=True, blank=True, verbose_name="父类别", related_name="sub_cat")
     is_tab = models.BooleanField(default=False, verbose_name="是否导航", help_text="是否导航")
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
@@ -35,10 +37,10 @@ class GoodsCategoryBrand(models.Model):
     """
     品牌名
     """
-    category = models.ForeignKey(GoodsCategory, null=True, blank=True, verbose_name="商品类别")
+    category = models.ForeignKey(GoodsCategory, null=True, blank=True, verbose_name="商品类别", related_name="brands")
     name = models.CharField(default="", max_length=30, verbose_name="品牌名", help_text="品牌名")
     desc = models.TextField(default="", max_length=200, verbose_name="品牌描述", help_text="品牌描述")
-    imag = models.ImageField(upload_to="brands/", max_length=200)
+    image = models.ImageField(upload_to="brands/", max_length=200)
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 
     class Meta:
@@ -107,6 +109,18 @@ class Banner(models.Model):
     class Meta:
         verbose_name = "首页轮播商品图"
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.goods.name
+
+
+class IndexAds(models.Model):
+    category = models.ForeignKey(GoodsCategory, related_name="category")
+    goods = models.ForeignKey(Goods, related_name="goods")
+
+    class Meta:
+        verbose_name = "首页广告商品"
+        verbose_name_plural = "首页广告商品"
 
     def __str__(self):
         return self.goods.name
